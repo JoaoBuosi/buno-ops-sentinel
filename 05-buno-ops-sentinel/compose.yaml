@@ -1,0 +1,17 @@
+services:
+ app:
+  build: .
+  ports: ["8105:8080"]
+  environment:
+   AEGIS_BASE_URL: ${AEGIS_BASE_URL:-http://host.docker.internal:8099}
+   AEGIS_API_KEY: ${AEGIS_API_KEY:-}
+   AEGIS_CHAT_PATH: ${AEGIS_CHAT_PATH:-/v1/chat/completions}
+ prometheus:
+  image: prom/prometheus:v2.54.1
+  ports: ["9095:9090"]
+  volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+ grafana:
+  image: grafana/grafana:11.2.0
+  ports: ["3005:3000"]
+  environment: {GF_SECURITY_ADMIN_USER: admin, GF_SECURITY_ADMIN_PASSWORD: admin}
+  depends_on: [prometheus]
